@@ -2,19 +2,19 @@ import torch
 
 class Config:
     # Model architecture
-    vocab_size = 1000  # Small vocab for toy model
-    n_embd = 128       # Embedding dimension
-    n_layer = 4        # Number of transformer layers
-    n_head = 4         # Number of attention heads
-    block_size = 64    # Context length
+    vocab_size = 65  # Will be updated by dataset (Shakespeare has ~65 chars)
+    n_embd = 384     # Embedding dimension - scaled up for better text generation
+    n_layer = 6      # Number of transformer layers - increased
+    n_head = 6       # Number of attention heads - increased
+    block_size = 256 # Context length - increased for better text understanding
     dropout = 0.1
     
     # Training
-    batch_size = 16
+    batch_size = 32  # Increased for better training stability
     learning_rate = 3e-4
-    max_iters = 1000
+    max_iters = 5000  # More iterations for text learning
     eval_interval = 100
-    eval_iters = 10
+    eval_iters = 20   # More eval iterations for better estimates
     
     # System
     device = 'cuda' if torch.cuda.is_available() else 'cpu'

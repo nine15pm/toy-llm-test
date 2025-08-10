@@ -45,7 +45,7 @@ def main():
     
     # Load data
     print("Loading datasets...")
-    train_loader, val_loader = get_dataloaders(config)
+    train_loader, val_loader, dataset = get_dataloaders(config)
     
     # Create model
     print("Initializing model...")
@@ -121,11 +121,35 @@ def main():
     print("Training completed!")
     
     # Test generation
-    print("\nTesting generation...")
+    print("\nTesting text generation...")
     model.eval()
-    context = torch.randint(0, config.vocab_size, (1, 10), device=config.device)
-    generated = model.generate(context, max_new_tokens=20, temperature=0.8, top_k=40)
-    print(f"Generated sequence: {generated[0].tolist()}")
+    
+    # Test with different prompts
+    test_prompts = [
+        "First Citizen:\nBefore we proceed any further, hear me speak.",
+        "ROMEO:\nBut soft, what light",
+        "To be or not to be",
+        "HAMLET:\n"
+    ]
+    
+    for prompt in test_prompts:
+        print(f"\nPrompt: '{prompt}'")
+        try:
+            context = torch.tensor([dataset.encode(prompt)], dtype=torch.long, device=config.device)
+            if context.size(1) > config.block_size:
+                context = context[:, -config.block_size:]
+            
+            generated = model.generate(context, max_new_tokens=100, temperature=0.8, top_k=40)
+            generated_text = dataset.decode(generated[0].tolist())
+            print(f"Generated: {generated_text}")
+        except Exception as e:
+            print(f"Generation failed: {e}")
+            # Fallback to random context
+            context = torch.randint(0, config.vocab_size, (1, 20), device=config.device)
+            generated = model.generate(context, max_new_tokens=50, temperature=0.8, top_k=40)
+            generated_text = dataset.decode(generated[0].tolist())
+            print(f"Random generation: {generated_text}")
+            break
     
     if config.wandb_log:
         wandb.finish()

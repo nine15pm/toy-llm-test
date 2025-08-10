@@ -1,6 +1,6 @@
-# Toy LLM Training Setup
+# Toy LLM for Remote GPU Testing
 
-A minimal PyTorch transformer for testing remote GPU setups and ML pipelines.
+A character-level transformer trained on Shakespeare for testing remote GPU setups and ML pipelines.
 
 ## Quick Start
 
@@ -19,27 +19,51 @@ A minimal PyTorch transformer for testing remote GPU setups and ML pipelines.
    python train.py
    ```
 
+4. **Generate text:**
+   ```bash
+   python generate.py
+   ```
+
 ## Features
 
-- **Tiny transformer model** (128d, 4 layers) - trains quickly
+- **Character-level transformer** (384d, 6 layers, ~2.5M parameters) 
+- **Shakespeare dataset** - automatically downloaded, no setup needed
 - **GPU detection & benchmarking** - perfect for testing remote setups  
-- **Synthetic dataset** - no external data dependencies
-- **Training metrics** - loss tracking and model checkpointing
-- **Generation testing** - verify model works end-to-end
+- **Text generation** - produces coherent Shakespeare-style completions
+- **Interactive generation** - test different prompts and temperatures
+
+## Model Details
+
+- **Architecture**: GPT-style decoder-only transformer
+- **Context length**: 256 characters  
+- **Vocabulary**: ~65 unique characters
+- **Training time**: ~10-20 minutes on modern GPUs
+- **Memory usage**: ~1-2GB GPU memory
 
 ## Configuration
 
 Edit `config.py` to adjust:
-- Model size (`n_embd`, `n_layer`, `n_head`)
+- Model size (`n_embd`, `n_layer`, `n_head`, `block_size`)
 - Training params (`batch_size`, `learning_rate`, `max_iters`)
 - GPU settings (`device`, `compile`)
 
+## Example Output
+
+```
+Prompt: "ROMEO: But soft, what light"
+
+Generated: "ROMEO: But soft, what light through yonder window breaks?
+It is the east, and Juliet is the sun.
+Arise, fair sun, and kill the envious moon,
+Who is already sick and pale with grief"
+```
+
 ## Remote GPU Testing
 
-This setup is ideal for testing:
+Perfect for validating:
 - CUDA installation and GPU visibility
-- Memory allocation and training speed
-- Model checkpointing and resume
-- Basic ML pipeline validation
+- Memory allocation and training speed  
+- Model checkpointing and resume capability
+- End-to-end ML pipeline functionality
 
-The model trains in ~2-5 minutes on modern GPUs, making it perfect for quick validation of remote environments.
+Fast enough for quick validation while being realistic enough to catch real issues.
